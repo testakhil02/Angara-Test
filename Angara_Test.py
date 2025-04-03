@@ -1,124 +1,95 @@
+import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.alert import Alert
-import time
-options = Options()
-options.add_experimental_option('detach', True)
-driver = webdriver.Firefox()
-#Open Angara website
-driver.get("https://www.angara.in/")
+
+# Initialize WebDriver with options
+options = webdriver.ChromeOptions()
+options.add_argument("--incognito")  # Open browser in incognito mode
+options.page_load_strategy = "eager"  # Load DOM faster
+driver = webdriver.Chrome(options=options)
+
+# Clear cache & cookies using Chrome DevTools Protocol (CDP)
+driver.execute_cdp_cmd("Network.clearBrowserCache", {})
+driver.execute_cdp_cmd("Network.clearBrowserCookies", {})
+
 driver.maximize_window()
-driver.implicitly_wait(8)
-#select_Ring_Catogery
-driver.find_element(By.XPATH, "//*[@id='main-nav']/li[3]/a").click()
+driver.implicitly_wait(30)
+wait = WebDriverWait(driver, 30)
+
+# Function to wait and click
+def wait_and_click(locator):
+    element = wait.until(EC.element_to_be_clickable(locator))
+    element.click()
+
+# Function to wait and send keys
+def wait_and_send_keys(locator, value):
+    element = wait.until(EC.presence_of_element_located(locator))
+    element.clear()
+    element.send_keys(value)
+
+# Open Angara website
+driver.get("https://www.angara.in/")
+time.sleep(20)
+# Select Ring Category
+wait_and_click((By.XPATH, "//a[@title='Rings']"))
 time.sleep(5)
-#handel POPUP window
-#def test_popup():
-#    driver.get("")
-#select_dimond_ring- Twin-Row Natural Diamond Swirl Infinity Link Ring
-driver.find_element(By.XPATH, "//*[@id='gf-products']/div[1]/div/div[1]/a/img").click()
-time.sleep(6)
-#select_Stone_Quality
-driver.find_element(By.XPATH, "//*[@id='swatch-option1']/div/fieldset/ul/li[2]/div/div[1]").click()
-time.sleep(4)
-#select_Carat_Weight
-driver.find_element(By.XPATH, "//*[@id='swatch-option2']/div/fieldset/div/div/select")
-time.sleep(4)
-#select_Metal_Type
-driver.find_element(By.XPATH, "//*[@id='swatch-option3']/div/fieldset/ul/li[4]/div/div[1]").click()
-time.sleep(4)
-#select_Ring_Size
-driver.find_element(By.XPATH, "//*[@id='option-box-1tem1']/div[2]/span").click()
-driver.find_element(By.XPATH, "//*[@id='option-box-1tem1']/div[2]/ul/li[5]/a").click()
-time.sleep(4)
-#select_Certificate_Add_On
-driver.find_element(By.XPATH, "//*[@id='option-box-3tem1']/div[2]/label[1]/label").click()
-time.sleep(4)
-'''
-#select_Quantity():
-driver.find_element(By.XPATH, "//*[@id='plus-icon']").click() # to Increase the quantity of product.
-driver.find_element(By.XPATH, "//*[@id='minus-icon']").click()  # to Decrease the quantity of product.
-'''
-#add_to_cart
-driver.find_element(By.XPATH, "//*[@id='8818607358233-product-form-buttons-template--22776952520985__main']/div[3]").click()
-time.sleep(8)
-'''#Add a Note
-driver.find_element(By.XPATH, "//*[@id='shopify-section-template--22776949571865__main']/section/div[3]/form/div[3]/div[3]/ul/li[1]/button").click()
-driver.find_element(By.XPATH, "//*[@id='note']").send_keys('Send Bill And Warranty Card too')
-time.sleep(4)
-# Select Country
-driver.find_element(By.XPATH, "//*[@id='shopify-section-template--22776949571865__main']/section/div[3]/form/div[3]/div[3]/ul/li[2]/button").click()
-
-# Select Country
-driver.find_element(By.XPATH, "//*[@id='address_country']").click()
+# Select Diamond Ring
+wait_and_click((By.XPATH, "//a[normalize-space()='Solitaire Round Diamond Infinity Promise Ring']"))
 time.sleep(2)
-# Select Province
-driver.find_element(By.XPATH, "//*[@id='address_province']").click()
-driver.find_element(By.XPATH, "//*[@id='address_province']/option[35]").click()
+# Select Gemstone Quality
+wait_and_click((By.XPATH, "//button[contains(@aria-label,'K, I3')]"))
 time.sleep(2)
-# Enter Pin Code
-driver.find_element(By.XPATH, "//*[@id='address_zip']").send_keys('201010')
+# Select Total Carat Weight
+wait_and_click((By.XPATH, "//img[@alt='1/4 Carat']"))
 time.sleep(2)
-# Enter Pin Code
-driver.find_element(By.XPATH, "//*[@id='shipping-calculator']/div/div[4]/input").click()
-'''
-#Checkout the Items
-driver.find_element(By.XPATH, "//*[@id='checkout']").click()
-time.sleep(4)
-#In Contact - Enter Mobile or Email ID
-driver.find_element(By.XPATH, "//*[@id='email']").send_keys('testakhil05@gmail.com')
-time.sleep(4)
-#Shipping Address
-driver.find_element(By.XPATH, "//*[@id='Select0']").click()
-time.sleep(4)
-# Enter First Name
-driver.find_element(By.XPATH, "//*[@id='TextField0']").send_keys('Akhil')
-# Enter Last Name
-driver.find_element(By.XPATH, "//*[@id='TextField1']").send_keys('Tiwari')
+# Select Metal Type
+wait_and_click((By.XPATH, "//button[@aria-label='14K White Gold']"))
+time.sleep(2)
+# Select Ring Size
+wait_and_click((By.CSS_SELECTOR, "div[class='slick-slide slick-active'] div div button[aria-label='8']"))
+time.sleep(2)
+# Select Certificate Add-On
+wait_and_click((By.XPATH, "//body/main/div/div/div/div/div/div[4]/div[1]/button[2]"))
+time.sleep(2)
+# Add to Cart
+wait_and_click((By.XPATH, "//span[contains(@class,'flex gap-1 items-center justify-center text-xs desk:text-base')]"))
+time.sleep(2)
+# Add a Note
+wait_and_send_keys((By.XPATH, "//textarea[@placeholder='Type your message']"), "Product is Good")
+wait_and_click((By.XPATH, "//button[normalize-space()='Save']"))
+time.sleep(2)
+# Secure Checkout
+wait_and_click((By.XPATH, "//span[normalize-space()='Secure Checkout']"))
+time.sleep(2)
+# Enter Contact Details
+wait_and_send_keys((By.XPATH, "//input[@class='p-2 border border-grayscale w-full hide-number-input-arrows']"), "9876543210")
+wait_and_send_keys((By.XPATH, "//input[contains(@type,'email')]"), "test@gmail.com")
+time.sleep(2)
+# Enter Name
+wait_and_send_keys((By.XPATH, "//input[@name='firstName']"), "Aman")
+wait_and_send_keys((By.XPATH, "//input[@name='lastName']"), "Aman")
+time.sleep(2)
 # Enter Address
-driver.find_element(By.XPATH, "//*[@id='shipping-address1']").send_keys('muradnagar, Ghaziabad')
-driver.find_element(By.XPATH, "//*[@id='shipping-address1-option-1']/span/mark").click()
-#Apartment Number
-driver.find_element(By.XPATH, "//*[@id='TextField2']").send_keys('342')
-#Enter City
-driver.find_element(By.XPATH, "//*[@id='TextField3']").send_keys('Ghaziabad')
-#Select State
-driver.find_element(By.XPATH, "//*[@id='Select1']").click()
-driver.find_element(By.XPATH, "//*[@id='Select1']/option[35]").click()
-#Enter PIN Code
-# If it is not fetched by entering Address Line number -83
-#driver.find_element(By.XPATH, "//*[@id='TextField4']").send_keys('201010')
-
-#Enter Phone Number
-driver.find_element(By.XPATH, "//*[@id='TextField5']").send_keys('6497338921')
-
-'''#Discount 
-driver.find_element(By.XPATH, "//*[@id='ReductionsInput0']").send_keys() #Enter the Discount Code
-driver.find_element(By.XPATH, "//*[@id='Form1']/div[1]/div/button").click() #Click on Apply Discount Code
-'''
-#Click on Continue to shopping
-driver.find_element(By.XPATH, "//*[@id='Form0']/div[1]/div/div/div[2]/div/div[2]/div[1]/button").click()
-'''
-#Change the Email
-driver.find_element(By.XPATH, "//*[@id='checkout-main']/div/div/div/div/section/div/div[1]/div[2]/a/span").click()
-
-#Change the Address
-driver.find_element(By.XPATH, "//*[@id='checkout-main']/div/div/div/div/section/div/div[2]/div[2]/a/span").click()
-time.sleep(4)
-'''
-#Continue to Payment
-driver.find_element(By.XPATH, "//*[@id='Form2']/div[1]/div/div/div/div/div[2]/div[1]/button").click()
-time.sleep(10)
-
-#Pay Now
-driver.find_element(By.XPATH, "//*[@id='Form5']/div[1]/div/div/div[2]/div[1]/div/button/span").click()
-time.sleep(4)
-
-
+wait_and_send_keys((By.XPATH, "//input[@name='addressLine1']"), "HN - 46, Gurgaon, Haryana")
+time.sleep(2)
+# Enter City
+wait_and_send_keys((By.XPATH, "//input[@name='city']"), "Gurgaon")
+time.sleep(2)
+# Select State
+dropdown = wait.until(EC.element_to_be_clickable((By.XPATH, "//select[@name='state']")))
+Select(dropdown).select_by_value("Haryana")
+time.sleep(2)
+# Enter PIN Code
+wait_and_send_keys((By.XPATH, "//input[@name='postalCode']"), "201010")
+time.sleep(2)
+# Enter Phone Number
+wait_and_send_keys((By.XPATH, "//input[@name='phoneNumber']"), "6497338921")
+time.sleep(2)
+# Continue to Payment
+wait_and_click((By.XPATH, "//button[normalize-space()='Continue To Payment']"))
+time.sleep(2)
+# Close browser
 driver.quit()
-
-
